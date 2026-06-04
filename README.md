@@ -139,7 +139,7 @@ Se debe crear un context global para administrar el estado principal de la aplic
 El context debe incluir, como minimo, tres estados:
 
 - `cart`: listado de productos agregados al carrito.
-- `favorites`: listado de productos favoritos. Analizar el caso en que el usuario aún no haya hecho login. Ya que si el usuario está logueado, los favoritos se cargan en la DB.
+- `favorites`: listado de productos favoritos. Si el usuario no inicio sesion, se mantienen temporalmente en el context. Si el usuario esta logueado, deben sincronizarse con la base de datos.
 - `activeUser`: datos del usuario activo luego del login.
 
 El context debe proveer funciones para:
@@ -152,6 +152,8 @@ El context debe proveer funciones para:
 - Quitar productos de favoritos.
 - Guardar el usuario activo.
 - Cerrar sesion o limpiar el usuario activo.
+
+Como `activeUser` vive en el context de la aplicacion, las consultas que dependan del usuario activo deben realizarse desde el lado cliente. Por ejemplo, una vez que el usuario hizo login y `activeUser` tiene su ID, se debe hacer un `fetch` desde un componente cliente o desde una funcion del context para traer informacion asociada a ese usuario, como sus favoritos.
 
 ### 5.6 Carrito
 
@@ -190,7 +192,76 @@ Se debe crear la ruta:
 /favorites
 ```
 
-Esta pantalla debe mostrar el listado de productos favoritos del usuario activo.
+Esta pantalla debe mostrar el listado de productos favoritos disponibles en el context. Si el usuario no inicio sesion, se mostraran los favoritos temporales. Si el usuario esta logueado, se mostraran los favoritos sincronizados con la base de datos.
+
+La carga de favoritos persistidos debe realizarse desde el cliente, usando el ID disponible en `activeUser`.
+
+Ejemplo de flujo esperado para un usuario logueado:
+
+- El usuario inicia sesion.
+- El usuario queda guardado en el context como `activeUser`.
+- La aplicacion toma `activeUser._id`.
+- Se realiza un `fetch` a una ruta de API para obtener los favoritos desde la base de datos.
+- La respuesta se guarda en el estado `favorites` del context.
+
+Un endpoint posible seria:
+
+```bash
+GET /api/users/[userId]/favorites
+```
+
+La base de datos debe guardar solamente los IDs de los productos favoritos, pero la API puede devolver los productos completos usando `populate` para facilitar el renderizado de la pantalla `/favorites`.
+
+Ejemplo de campo en el modelo `User`:
+
+```js
+favorites: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+  },
+]
+```
+
+Ejemplo de consulta en la API:
+
+```js
+const user = await User.findById(userId).populate("favorites");
+
+return Response.json({
+  favorites: user.favorites,
+});
+```
+
+Si el usuario todavia no inicio sesion:
+
+- Puede marcar productos como favoritos.
+- Esos favoritos deben guardarse temporalmente en el estado `favorites` del context.
+- No se guardan todavia en la base de datos porque no existe un usuario asociado.
+
+Cuando el usuario inicia sesion:
+
+- Se deben obtener los favoritos persistidos del usuario desde la base de datos.
+- Se deben combinar con los favoritos temporales que estaban en el context.
+- Se debe evitar duplicar productos.
+- Se debe sincronizar el resultado final con la base de datos.
+- Se debe actualizar el estado `favorites` del context con la lista final.
+
+Endpoints sugeridos para favoritos:
+
+```bash
+GET /api/users/[userId]/favorites
+POST /api/users/[userId]/favorites
+DELETE /api/users/[userId]/favorites/[productId]
+PUT /api/users/[userId]/favorites/sync
+```
+
+Uso esperado de cada endpoint:
+
+- `GET /api/users/[userId]/favorites`: obtiene los favoritos del usuario desde la base de datos.
+- `POST /api/users/[userId]/favorites`: agrega un producto a favoritos. El body puede incluir `{ "productId": "..." }`.
+- `DELETE /api/users/[userId]/favorites/[productId]`: quita un producto de favoritos.
+- `PUT /api/users/[userId]/favorites/sync`: recibe un array de IDs de productos favoritos y lo sincroniza con los favoritos existentes del usuario, evitando duplicados.
 
 La pantalla de favoritos debe permitir:
 
@@ -267,7 +338,7 @@ Las ordenes deben manejar cuatro estados posibles:
 
 - `Active`: orden recibida y pendiente de procesamiento.
 - `Closed`: orden finalizada.
-- `Shiped`: orden enviada.
+- `Shipped`: orden enviada.
 - `Canceled`: orden cancelada.
 
 El estado de la orden debe poder modificarse desde las pantallas administrativas correspondientes.
@@ -337,7 +408,7 @@ Debe reformularse para funcionar como pantalla principal de resumen administrati
 Esta pantalla debe mostrar, como minimo:
 
 - Ultimas 5 ordenes recibidas.
-- Total vendido en el mes
+- Total vendido en el mes.
 - Ultimos 5 usuarios registrados.
 - Productos con stock bajo, considerando stock `1` o `0`.
 - Accesos o links hacia las secciones principales de administracion.
@@ -434,9 +505,9 @@ Los siguientes puntos son opcionales y suman valor al trabajo:
 - Agregar busqueda de productos.
 - Agregar filtros por categoria o precio.
 - Agregar historial de ordenes del usuario.
-- Agregar gráficos en el dashboard
-- Hostear las imagenes en Vercel Blob (Cuidado con los rate limits)
-- Realizar autenticación del usuario meditante JWT, encriptando el password en el server.
+- Agregar graficos en el dashboard.
+- Hostear las imagenes en Vercel Blob u otro servicio similar. Este punto es opcional y no reemplaza el requisito base de trabajar con imagenes locales en `public/images/products/`.
+- Realizar autenticacion del usuario mediante JWT, encriptando el password en el servidor.
 
 ## 10. Configuracion del Proyecto
 
@@ -477,6 +548,7 @@ Se evaluara:
 - Funcionamiento de la pantalla de favoritos.
 - Funcionamiento del carrito con productos customizados.
 - Creacion correcta de orders con numero secuencial.
+- Implementacion del dashboard administrativo con resumen, listado de ordenes y cambio de estado.
 - Calidad del diseño implementado con TailwindCSS.
 - Organizacion del codigo.
 - Claridad de componentes, funciones y estructura de carpetas.
@@ -503,5 +575,96 @@ La entrega debe incluir:
 Todas las rutas principales deben ser accesibles desde la interfaz de usuario.
 
 Cualquier propuesta superadora será tomada en cuenta.
+
+## 13.2 Flujo general de navegación
+
+El siguiente diagrama representa el recorrido principal que puede realizar un usuario dentro del ecommerce, desde el ingreso al sitio hasta la finalización de una compra.
+
+```mermaid
+flowchart TD
+    A[Usuario entra al ecommerce] --> B[Home / Catálogo]
+    B --> C[Ver categorías]
+    B --> D[Ver detalle de producto]
+    C --> E[Productos por categoría]
+    E --> D
+
+    D --> F[Seleccionar customizaciones]
+    F --> G[Agregar al carrito]
+    D --> H[Agregar a favoritos]
+
+    G --> I[Carrito]
+    I --> J[Checkout]
+    J --> K[Crear orden en MongoDB]
+    K --> L[Limpiar carrito]
+    L --> M[Compra finalizada]
+
+    H --> N{Usuario logueado?}
+    N -->|No| O[Guardar favoritos en Context]
+    N -->|Sí| P[Sincronizar favoritos con MongoDB]
+```
+
+## 13.3 Flujo de información del carrito y checkout
+
+El siguiente diagrama muestra cómo circula la información desde la pantalla de detalle del producto hasta la creación de una orden de compra en la base de datos.
+
+```mermaid
+flowchart LR
+    A[Detalle de producto] --> B[Customizaciones seleccionadas]
+    B --> C[Cart Context]
+    C --> D[Pantalla de carrito]
+    D --> E[Formulario de checkout]
+    E --> F[API de órdenes]
+    F --> G[(MongoDB)]
+    G --> H[Orden creada]
+    H --> I[Dashboard de órdenes]
+```
+
+## 13.4 Flujo de favoritos
+
+El siguiente diagrama representa el comportamiento esperado de los productos favoritos, contemplando usuarios no logueados y usuarios logueados.
+
+```mermaid
+flowchart TD
+    A[Usuario marca producto como favorito] --> B{Hay activeUser?}
+
+    B -->|No| C[Guardar en favorites del Context]
+    C --> D[Mostrar en /favorites como favoritos temporales]
+
+    B -->|Sí| E[Enviar productId a la API]
+    E --> F[(MongoDB - User.favorites)]
+    F --> G[Actualizar favorites en Context]
+    G --> H[Mostrar en /favorites]
+
+    I[Usuario inicia sesión] --> J[Obtener activeUser]
+    J --> K[Consultar favoritos persistidos]
+    K --> L[Combinar con favoritos temporales]
+    L --> M[Evitar duplicados]
+    M --> N[Sincronizar con MongoDB]
+    N --> O[Actualizar Context]
+```
+
+## 13.5 Flujo de administración de órdenes
+
+El siguiente diagrama muestra el recorrido de una orden desde que es generada por el usuario hasta que es gestionada desde el dashboard administrativo.
+
+```mermaid
+flowchart TD
+    A[Usuario finaliza compra] --> B[Se crea una Order]
+    B --> C[Order queda en estado Active]
+    C --> D[Dashboard / Orders]
+
+    D --> E[Administrador revisa la orden]
+    E --> F{Cambiar estado}
+
+    F --> G[Closed]
+    F --> H[Shipped]
+    F --> I[Canceled]
+
+    G --> J[Actualizar orden en MongoDB]
+    H --> J
+    I --> J
+```
+
+
 
 **Welcome to the e-machine**
