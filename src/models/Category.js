@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+//Este archivo es cómo se construye una categoría en la base de datos: dice que tiene que tener un nombre de texto obligatorio y único, una descripción opcional, y que el sistema tiene que anotar la hora exacta en la que se creó
 const categorySchema = new mongoose.Schema(
   {
     name: {

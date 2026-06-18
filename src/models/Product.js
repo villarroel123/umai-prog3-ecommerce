@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+//es la planilla con las leyes y reglas de control, pero adaptado a los productos 
 const productSchema = new mongoose.Schema(
   {
     name: {
