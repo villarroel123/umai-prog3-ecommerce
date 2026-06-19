@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getProductById } from "@/lib/products";
 
 function getProductImageSrc(image) {
   if (!image) {
@@ -83,6 +84,10 @@ export default function ProductGrid({ products = [] }) {
             ) : null}
 
             <p className="mt-4 text-sm text-slate-500">Stock: {product.stock}</p>
+            {/* boton a pagina detalle */}
+            <Link href={`/products/${product._id}`}>
+              See more
+            </Link>
           </div>
         </article>
       ))}
