@@ -4,6 +4,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/categories", label: "Categorias" },
   { href: "/dashboard", label: "Dashboard" },
+  { href: "/custom", label: "Custom" }
 ];
 
 export default function Navbar() {

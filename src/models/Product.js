@@ -34,6 +34,12 @@ const productSchema = new mongoose.Schema(
         ref: "Category",
       },
     ],
+    customOptions: [
+    {
+      title: { type: String, required: true }, 
+      choices: [{ type: String, required: true }] 
+    }
+    ]
   },
   {
     timestamps: true,
