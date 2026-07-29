@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import{getProductById} from "@/lib/products";
 import Image from 'next/image';
+import CartButton from "@/components/CartButton";
 
 function getProductImageSrc(image) {
   if (!image) {
@@ -47,9 +48,10 @@ export default async function DetailProductPage({params}){
                     <p className="text-slate-500">Stock: {stock}</p>
                 </div>
 
-                <button className="w-full md:w-auto bg-slate-900 text-white text-xs font-semibold py-3 px-8 rounded-xl transition-all hover:bg-slate-800 active:scale-[0.98] mt-2">
+                {/* <button className="w-full md:w-auto bg-slate-900 text-white text-xs font-semibold py-3 px-8 rounded-xl transition-all hover:bg-slate-800 active:scale-[0.98] mt-2">
                     Agregar al carrito
-                </button>
+                </button> */}
+                <CartButton product={product} />
             </div>
         </div>
 </section>
