@@ -72,8 +72,7 @@ export default function ProductGrid({ products = [] }) {
                       <Link
                         key={category._id}
                         className="rounded-lg bg-slate-50 border border-slate-100 px-2.5 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:bg-slate-900 hover:text-white hover:border-slate-900"
-                        href={`/category/${category._id}`}
-                      >
+                        href={`/category/${category._id}`}>
                         {category.name}
                       </Link>
                     )

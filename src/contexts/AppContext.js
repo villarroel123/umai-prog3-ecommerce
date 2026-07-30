@@ -8,6 +8,9 @@ const AppContext= createContext();
 export const AppContextProvider= ({children})=>{
     const [cart, setCart] = useState([]);
     const [favoritos,setFavoritos]=useState([]);
+    const [userActive, setUserActive]= useState({});
+
+    console.log(userActive)
 
     const addToCart = (product, quantity = 1, customizations = null) => {
     setCart((prevCart) => {
@@ -64,8 +67,10 @@ export const AppContextProvider= ({children})=>{
     );
   };
 
+
+
     return( 
-        <AppContext.Provider value={{ favoritos, setFavoritos, cart, setCart,toggleFavorite, addToCart, removeFromCart}}>
+        <AppContext.Provider value={{ favoritos, setFavoritos, cart, setCart,toggleFavorite, addToCart, removeFromCart, userActive,setUserActive}}>
             {children}
         </AppContext.Provider>
     )

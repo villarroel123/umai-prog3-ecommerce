@@ -1,7 +1,8 @@
 "use client"
 import {useState} from "react";
+import CartButton from "@/components/CartButton";
 
-export default function CustomPage(){
+export default function ProductCustomizer({ product }){
 
     const [design, setDesign]= useState({
         shape:"Almendra",
@@ -10,6 +11,7 @@ export default function CustomPage(){
         style:"Liso",
         effect:"Brillante"
     });
+    const [quantity, setQuantity]=useState(1)
 
     const images={
         "Almendra-Nude":"",
@@ -50,7 +52,9 @@ export default function CustomPage(){
     const styles=["Liso","Francesita","Marmorado","Nail Art"];
     const effects=["Brillante","Mate","Cromado","Sin efecto"]
     //para cambiar precios
-    let precioFinal = 7500;
+    const handleIncrease = () => setQuantity((prev) => prev + 1);
+    const handleDecrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+    let precioFinal = 7500*quantity;
 
     if (design.effect !== "Sin efecto") {
     precioFinal += 2000; 
@@ -75,7 +79,7 @@ export default function CustomPage(){
 
     return(
         <section className="w-full  min-h-screen flex items-center">
-            <div className="max-w-[90%] w-full mx-auto bg-white p-8 flex justify-between">
+            <div className=" w-full mx-auto bg-white  flex justify-between">
                 <div className="flex flex-col w-full" >
                     <div className="mb-6 ">
                     <h4 className="text-sm font-semibold text-slate-700 mb-2">Formas</h4>
@@ -169,9 +173,9 @@ export default function CustomPage(){
                     </div>
                 </div>
                 
-                <article className="mb-6 rounded-2xl shadow-md border border-slate-200/60 bg-white p-6 flex flex-col justify-between w-[40%] transition-all hover:shadow-lg"> 
+                <article className="mb-6 rounded-2xl shadow-md border border-slate-200/60 bg-white p-6 flex flex-col justify-between w-[60%] transition-all hover:shadow-lg"> 
                     <div className="mb-4">
-                        <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Producto Personalizado</p>
+                        <h3 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Producto Personalizado</h3>
                         <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">{customProduct.name}</h3>
                     </div>
                     <div className="space-y-2.5 text-sm text-slate-600 border-t border-b border-slate-100 py-4 my-2">
@@ -192,14 +196,37 @@ export default function CustomPage(){
                             <p className="font-semibold text-slate-800">{customProduct.effect}</p>
                         </div>
                     </div>
+                    <div className="mb-4">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
+                            Cantidad
+                        </h3>
+                        <div className="flex items-center gap-3 w-fit border border-slate-200 rounded-xl p-1 bg-slate-50">
+                            <button
+                            type="button"
+                            onClick={handleDecrease}
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all"
+                            >
+                            -
+                            </button>
+                            <span className="w-8 text-center font-bold text-sm text-slate-900">
+                            {quantity}
+                            </span>
+                            <button
+                            type="button"
+                            onClick={handleIncrease}
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all"
+                            >
+                            +
+                            </button>
+                        </div>
+                    </div>
+
                     <div className="mt-4 pt-2 flex flex-col gap-3">
                         <div className="flex justify-between items-baseline">
                             <p className="text-xs font-medium text-slate-400">Total estimado:</p>
                             <p className="text-2xl font-black text-slate-950">${customProduct.price}</p>
                         </div>
-                        <button className="w-full bg-slate-900 text-white text-xs font-semibold py-3 px-4 rounded-xl transition-all hover:bg-slate-800 active:scale-[0.98] shadow-sm">
-                            Agregar al carrito
-                        </button>
+                        <CartButton product={product} quantity={1} design={design}/>
                     </div>
                 </article>
                 
