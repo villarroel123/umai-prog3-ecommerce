@@ -1,17 +1,21 @@
 'use client'
-import { useState, useContext, createContext } from "react";
+import { useState, useContext, createContext, useEffect } from "react";
 
 const AppContext= createContext();
 
 //creo provider
 
 export const AppContextProvider= ({children})=>{
-    const [cart, setCart] = useState([]);
-    const [favoritos,setFavoritos]=useState([]);
-    const [userActive, setUserActive]= useState({});
-
-    console.log(userActive)
-
+  const [cart, setCart] = useState([]);
+  const [favoritos,setFavoritos]=useState([]);
+  const [userActive, setUserActive] = useState(null);
+  
+    const login = (userData) => {
+      setUserActive(userData);
+    };
+    const logout = () => {
+      setUserActive(null);
+    };
     const addToCart = (product, quantity = 1, customizations = null) => {
     setCart((prevCart) => {
       const existingIndex = prevCart.findIndex(
@@ -58,6 +62,27 @@ export const AppContextProvider= ({children})=>{
         )
         );
     };
+    const updateQuantity = (indexToUpdate, newQuantity) => {
+    if (newQuantity < 1) return; 
+
+    setCart((prevCart) =>
+        prevCart.map((item, index) => {
+        if (index === indexToUpdate) {
+            return {
+            ...item,
+            quantity: newQuantity,
+            subtotal: item.price * newQuantity,
+            };
+        }
+        return item;
+        })
+    );
+    };
+
+    const clearCart = () => {
+        setCart([]);
+    };
+
     //para favoritos
     const toggleFavorite = (productId) => {
     setFavoritos((item) =>
@@ -68,9 +93,8 @@ export const AppContextProvider= ({children})=>{
   };
 
 
-
     return( 
-        <AppContext.Provider value={{ favoritos, setFavoritos, cart, setCart,toggleFavorite, addToCart, removeFromCart, userActive,setUserActive}}>
+        <AppContext.Provider value={{ favoritos, setFavoritos, cart, setCart,toggleFavorite, addToCart, removeFromCart, clearCart, updateQuantity, userActive,setUserActive,login,logout}}>
             {children}
         </AppContext.Provider>
     )

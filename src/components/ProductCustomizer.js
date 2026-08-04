@@ -11,7 +11,8 @@ export default function ProductCustomizer({ product }){
         style:"Liso",
         effect:"Brillante"
     });
-    const [quantity, setQuantity]=useState(1)
+    const [quantity, setQuantity]=useState(1);
+    
 
     const images={
         "Almendra-Nude":"",
@@ -42,8 +43,8 @@ export default function ProductCustomizer({ product }){
         "Square-Black Glossy": "",
         "Square-Glitter Silver": "",
     }
-    const currentImageKey = `${design.shape}-${design.color}`;
-    const currentImageSrc = images[currentImageKey]
+    // const currentImageKey = `${design.shape}-${design.color}`;
+    // const currentImageSrc = images[currentImageKey]
 
     //Opciones de estilos
     const shapes=["Almendra","Coffin","Stilleto","Square"];
@@ -54,6 +55,8 @@ export default function ProductCustomizer({ product }){
     //para cambiar precios
     const handleIncrease = () => setQuantity((prev) => prev + 1);
     const handleDecrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
+
     let precioFinal = 7500*quantity;
 
     if (design.effect !== "Sin efecto") {
@@ -72,6 +75,7 @@ export default function ProductCustomizer({ product }){
         effect: design.effect,
         price: precioFinal,
         // image: currentImageSrc,
+        image:product.image,
         quantity: 1
     }
 
@@ -204,18 +208,16 @@ export default function ProductCustomizer({ product }){
                             <button
                             type="button"
                             onClick={handleDecrease}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all"
-                            >
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all">
                             -
                             </button>
-                            <span className="w-8 text-center font-bold text-sm text-slate-900">
-                            {quantity}
-                            </span>
+                            <p className="w-8 text-center font-bold text-sm text-slate-900">
+                                {quantity}
+                            </p>
                             <button
                             type="button"
                             onClick={handleIncrease}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all"
-                            >
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all">
                             +
                             </button>
                         </div>
@@ -226,7 +228,7 @@ export default function ProductCustomizer({ product }){
                             <p className="text-xs font-medium text-slate-400">Total estimado:</p>
                             <p className="text-2xl font-black text-slate-950">${customProduct.price}</p>
                         </div>
-                        <CartButton product={product} quantity={1} design={design}/>
+                        <CartButton product={customProduct} quantity={1} design={design}/>
                     </div>
                 </article>
                 
