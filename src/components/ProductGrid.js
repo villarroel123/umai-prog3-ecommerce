@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getProductById } from "@/lib/products";
 
 function getProductImageSrc(image) {
   if (!image) {
@@ -18,7 +17,7 @@ export default function ProductGrid({ products = [] }) {
   if (products.length === 0) {
     return (
       <p className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center text-slate-600">
-        Todavia no hay productos cargados.
+        No products added yet.
       </p>
     );
   }
