@@ -1,57 +1,52 @@
 'use client'
 import { useAppContext } from "@/contexts/AppContext";
 import OrderGrid from "@/components/OrderGrid";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-export default function UserPage(){
+export default function UserPage() {
     const { userActive } = useAppContext();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [notFound, setNotFound] = useState(false);
-    const userId = userActive?._id;
+    const [error, setError] = useState(null);
+
+    const userId = userActive?._id || userActive?.id || userActive?.user?._id;
 
     useEffect(() => {
-        const handleGetItems = async () => {
-            try {
-                setNotFound(false);
-                setLoading(true);
-                const response = await axios.get(`/api/users/${userId}/orders`);
-                setOrders(response.data);
-            } catch (err) {
-                console.error("Error al cargar órdenes:", err);
-                setNotFound(true);
-            }
-            };
+        if (!userId) {
+            setLoading(false);
+            return;
+        }
 
-            handleGetItems();
+        async function fetchOrders() {
+            try {
+                setLoading(false);
+                setError(null);
+                const res = await axios.get(`/api/users/${userId}/orders`);
+                setOrders(res.data);
+            } catch (err) {
+                setError("Ocurrió un error al cargar tus órdenes.");
+            } 
+        }
+
+        fetchOrders();
     }, [userId]);
-    return(
-        <div>
-            {notFound && (
-                <div className="w-full flex items-center justify-center">
-                <div className="w-4/5">
-                    <h2 className="text-white pt-5 font-lexend">NOT FOUND</h2>
-                </div>
-                </div>
+
+    return (
+        <div className="max-w-5xl mx-auto p-6 space-y-6 font-lexend text-white">
+            <h2 className="text-3xl font-bold">Mis Órdenes</h2>
+
+            {loading && <p className="text-gray-300">Cargando órdenes...</p>}
+
+            {error && <p className="text-red-400">{error}</p>}
+
+            {!loading && !error && orders.length === 0 && (
+                <p className="text-gray-400">No se encontraron órdenes para este usuario.</p>
             )}
-            {loading && (
-                <div className="w-full flex items-center justify-center">
-                <div className="w-4/5">
-                    <p className="text-white pt-5 font-lexend">Loading orders...</p>
-                </div>
-                </div>
-            )}
-            {!userActive && !loading && (
-                <p className="p-8 text-center text-white font-lexend">
-                    Debes iniciar sesión para ver tus órdenes.
-                </p>
-            )}
-            {userActive && !loading && !notFound && (
-                <div className="max-w-5xl mx-auto p-6 space-y-6">
-                    <h2 className="text-2xl font-bold text-white font-lexend">My Orders</h2>
-                    <OrderGrid orders={orders} />
-                </div>
+
+            {!loading && !error && orders.length > 0 && (
+                <OrderGrid orders={orders} />
             )}
         </div>
-    )
+    );
 }
-
