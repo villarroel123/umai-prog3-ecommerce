@@ -1,238 +1,185 @@
 "use client"
-import {useState} from "react";
+import { useState } from "react";
 import CartButton from "@/components/CartButton";
+import FavoriteButton from "@/components/FavoriteButton";
 
-export default function ProductCustomizer({ product }){
-
-    const [design, setDesign]= useState({
-        shape:"Almendra",
-        color:"Natural",
-        size:"S",
-        style:"Liso",
-        effect:"Brillante"
+export default function ProductCustomizer({ product }) {
+    const [design, setDesign] = useState({
+        shape: "Almendra",
+        color: "Nude",
+        size: "S",
+        style: "Liso",
+        effect: "Brillante"
     });
-    const [quantity, setQuantity]=useState(1);
+    const [quantity, setQuantity] = useState(1);
     
+    // Opciones de estilos
+    const shapes = ["Almendra", "Coffin", "Stilleto", "Square"];
+    const colors = ["Nude", "Milky White", "Soft Pink", "Red Classic", "Black Glossy", "Glitter Silver"];
+    const sizes = ["S", "M", "L"];
+    const styles = ["Liso", "Francesita", "Marmolado", "Nail Art"];
+    const effects = ["Brillante", "Mate", "Cromado", "Sin efecto"];
 
-    const images={
-        "Almendra-Nude":"",
-        "Almendra-Milky White": "",
-        "Almendra-Soft Pink": "",
-        "Almendra-Red Classic": "",
-        "Almendra-Black Glossy": "",
-        "Almendra-Glitter Silver": "",
-        //coffin
-        "Coffin-Nude":"",
-        "Coffin-Milky White": "",
-        "Coffin-Soft Pink": "",
-        "Coffin-Red Classic": "",
-        "Coffin-Black Glossy": "",
-        "Coffin-Glitter Silver": "",
-        //stilleto
-        "Stilleto-Nude":"",
-        "Stilleto-Milky White": "",
-        "Stilleto-Soft Pink": "",
-        "stilleto-Red Classic": "",
-        "Stilleto-Black Glossy": "",
-        "Stilleto-Glitter Silver": "",
-        //square
-        "Square-Nude":"",
-        "Square-Milky White": "",
-        "Square-Soft Pink": "",
-        "Square-Red Classic": "",
-        "Square-Black Glossy": "",
-        "Square-Glitter Silver": "",
-    }
-    // const currentImageKey = `${design.shape}-${design.color}`;
-    // const currentImageSrc = images[currentImageKey]
-
-    //Opciones de estilos
-    const shapes=["Almendra","Coffin","Stilleto","Square"];
-    const colors=["Nude","Milky White","Soft Pink","Red Classic","Black Glossy","Glitter Silver"];
-    const sizes=["S","M","L","Custom"];
-    const styles=["Liso","Francesita","Marmorado","Nail Art"];
-    const effects=["Brillante","Mate","Cromado","Sin efecto"]
-    //para cambiar precios
+    // Para cambiar precios
     const handleIncrease = () => setQuantity((prev) => prev + 1);
     const handleDecrease = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
-
-    let precioFinal = 7500*quantity;
+    let precioFinal = 7500 * quantity;
 
     if (design.effect !== "Sin efecto") {
-    precioFinal += 2000; 
+        precioFinal += 2000; 
     }
 
     if (design.style !== "Liso") {
-    precioFinal += 2000;
+        precioFinal += 2000;
     }
-    const customProduct={
-        name:"Set custom",
-        shape: design.shape,       
+
+    const customProduct = {
+        name: "Set custom",
+        shape: design.shape,          
         color: design.color,        
         size: design.size,
         style: design.style,
         effect: design.effect,
         price: precioFinal,
-        // image: currentImageSrc,
-        image:product.image,
-        quantity: 1
-    }
+        image: product.image,
+        quantity: quantity
+    };
 
-    
-
-    return(
-        <section className="w-full  min-h-screen flex items-center">
-            <div className=" w-full mx-auto bg-white  flex justify-between">
-                <div className="flex flex-col w-full" >
-                    <div className="mb-6 ">
-                    <h4 className="text-sm font-semibold text-slate-700 mb-2">Formas</h4>
-                    <div className="flex flex-wrap gap-1">
-                    {shapes.map((shape) => (
-                        <button
-                        key={shape}
-                        onClick={() => setDesign({ ...design, shape: shape })}
-                        className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                            design.shape === shape 
-                            ? "bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10"
-                            : "bg-white text-black border-slate-200 hover:bg-slate-50"
-                        }`}
-                        >
-                        {shape}
-                        </button>
-                    ))}
-                    </div>
-                    </div>
-                    <div className="mb-6 ">
-                        <h4 className="text-sm font-semibold text-slate-700 mb-2">Colores</h4>
-                        <div className="flex flex-wrap gap-1">
-                        {colors.map((color)=>(
-                            <button 
-                            key={color}
-                            onClick={() => setDesign({ ...design, color: color })} 
-                            className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                                design.color === color 
-                                ? "bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10"
-                                : "bg-white text-black border-slate-200 hover:bg-slate-50"
-                            }`}
+    return (
+        <div className="flex flex-col gap-5 w-full">
+            <div className="flex flex-col gap-3 border-t border-white/20 pt-4">
+                <div>
+                    <h4 className="text-xs font-semibold text-slate-700 mb-1.5 font-serif">Formas</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                        {shapes.map((shape) => (
+                            <button
+                                key={shape}
+                                type="button"
+                                onClick={() => setDesign({ ...design, shape: shape })}
+                                className={`px-2.5 py-1.5 rounded-lg border text-xs font-serif font-medium transition-all ${
+                                    design.shape === shape 
+                                    ? "bg-pink-600 text-white border-pink-600 shadow-md shadow-pink-600/20"
+                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                }`}
                             >
-                            {color}
+                                {shape}
                             </button>
                         ))}
-                        </div>
                     </div>
-                    <div className="mb-6 ">
-                        <h4 className="text-sm font-semibold text-slate-700 mb-2">Tamaños</h4>
-                        <div className="flex flex-wrap gap-1">
-                        {sizes.map((size)=>(
+                </div>
+                <div>
+                    <h4 className="text-xs font-semibold text-slate-700 mb-1.5 font-serif">Colores</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                        {colors.map((color) => (
                             <button 
-                            key={size}
-                            onClick={() => setDesign({ ...design, size: size })} 
-                            className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                                design.size === size 
-                                ? "bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10"
-                                : "bg-white text-black border-slate-200 hover:bg-slate-50"
-                            }`}
+                                key={color}
+                                type="button"
+                                onClick={() => setDesign({ ...design, color: color })} 
+                                className={`px-2.5 py-1.5 rounded-lg border text-xs font-serif font-medium transition-all ${
+                                    design.color === color 
+                                    ? "bg-pink-600 text-white border-pink-600 shadow-md shadow-pink-600/20"
+                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                }`}
                             >
-                            {size}
+                                {color}
                             </button>
                         ))}
-                        </div>
                     </div>
-                    <div className="mb-6 ">
-                        <h4 className="text-sm font-semibold text-slate-700 mb-2">Estilos</h4>
-                        <div className="flex flex-wrap gap-1">
-                        {styles.map((style)=>(
+                </div>
+                <div>
+                    <h4 className="text-xs font-semibold text-slate-700 mb-1.5 font-serif">Tamaños</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                        {sizes.map((size) => (
                             <button 
-                            key={style}
-                            onClick={() => setDesign({ ...design, style: style })} 
-                            className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                                design.style === style 
-                                ? "bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10"
-                                : "bg-white text-black border-slate-200 hover:bg-slate-50"
-                            }`}
+                                key={size}
+                                type="button"
+                                onClick={() => setDesign({ ...design, size: size })} 
+                                className={`px-2.5 py-1.5 rounded-lg border text-xs font-serif font-medium transition-all ${
+                                    design.size === size 
+                                    ? "bg-pink-600 text-white border-pink-600 shadow-md shadow-pink-600/20"
+                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                }`}
+                            >
+                                {size}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <h4 className="text-xs font-semibold text-slate-700 mb-1.5 font-serif">Estilos</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                        {styles.map((style) => (
+                            <button 
+                                key={style}
+                                type="button"
+                                onClick={() => setDesign({ ...design, style: style })} 
+                                className={`px-2.5 py-1.5 rounded-lg border text-xs font-serif font-medium transition-all ${
+                                    design.style === style 
+                                    ? "bg-pink-600 text-white border-pink-600 shadow-md shadow-pink-600/20"
+                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                }`}
                             >
                                 {style}
                             </button>
                         ))}
-                        </div>
                     </div>
-                    <div className="mb-6 ">
-                        <h4 className="text-sm font-semibold text-slate-700 mb-2">Efectos</h4>
-                        <div className="flex flex-wrap gap-1">
-                        {effects.map((effect)=>(
+                </div>
+                <div>
+                    <h4 className="text-xs font-semibold text-slate-700 mb-1.5 font-serif">Efectos</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                        {effects.map((effect) => (
                             <button 
-                            key={effect}
-                            onClick={() => setDesign({ ...design, effect: effect })} 
-                            className={`p-2.5 rounded-xl border text-xs font-medium transition-all ${
-                                design.effect === effect
-                                ? "bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10"
-                                : "bg-white text-black border-slate-200 hover:bg-slate-50"
-                            }`}
+                                key={effect}
+                                type="button"
+                                onClick={() => setDesign({ ...design, effect: effect })} 
+                                className={`px-2.5 py-1.5 rounded-lg border text-xs font-serif font-medium transition-all ${
+                                    design.effect === effect
+                                    ? "bg-pink-600 text-white border-pink-600 shadow-md shadow-pink-600/20"
+                                    : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+                                }`}
                             >
                                 {effect}
                             </button>
                         ))}
-                        </div>
                     </div>
                 </div>
-                
-                <article className="mb-6 rounded-2xl shadow-md border border-slate-200/60 bg-white p-6 flex flex-col justify-between w-[60%] transition-all hover:shadow-lg"> 
-                    <div className="mb-4">
-                        <h3 className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1">Producto Personalizado</h3>
-                        <h3 className="text-xl font-extrabold text-slate-900 tracking-tight">{customProduct.name}</h3>
-                    </div>
-                    <div className="space-y-2.5 text-sm text-slate-600 border-t border-b border-slate-100 py-4 my-2">
-                        <div className="flex justify-between items-center">
-                            <p className="text-slate-400">Color</p>
-                            <p className="font-semibold text-slate-800">{customProduct.color}</p>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <p className="text-slate-400">Tamaño</p>
-                            <p className="font-semibold text-slate-800">{customProduct.size}</p>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <p className="text-slate-400">Estilo</p>
-                            <p className="font-semibold text-slate-800">{customProduct.style}</p>
-                        </div>
-                        <div className="flex justify-between items-center">
-                            <p className="text-slate-400">Efecto</p>
-                            <p className="font-semibold text-slate-800">{customProduct.effect}</p>
-                        </div>
-                    </div>
-                    <div className="mb-4">
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">
-                            Cantidad
-                        </h3>
-                        <div className="flex items-center gap-3 w-fit border border-slate-200 rounded-xl p-1 bg-slate-50">
-                            <button
-                            type="button"
-                            onClick={handleDecrease}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all">
-                            -
-                            </button>
-                            <p className="w-8 text-center font-bold text-sm text-slate-900">
-                                {quantity}
-                            </p>
-                            <button
-                            type="button"
-                            onClick={handleIncrease}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all">
-                            +
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="mt-4 pt-2 flex flex-col gap-3">
-                        <div className="flex justify-between items-baseline">
-                            <p className="text-xs font-medium text-slate-400">Total estimado:</p>
-                            <p className="text-2xl font-black text-slate-950">${customProduct.price}</p>
-                        </div>
-                        <CartButton product={customProduct} quantity={1} design={design}/>
-                    </div>
-                </article>
-                
             </div>
-        </section>
-    )
+            <div className="flex items-center justify-between border border-pink-200 rounded-xl bg-pink-50/40 backdrop-blur-md overflow-hidden mt-2">
+                <div className="px-4 py-3">
+                    <p className="text-xs font-semibold text-pink-700 font-serif">Total estimado:</p>
+                </div>
+                <div className="border-l border-pink-200 px-6 py-3 bg-pink-100/50">
+                    <p className="text-xl font-black text-pink-600 font-serif">${customProduct.price}</p>
+                </div>
+            </div>
+            <div className="flex items-center justify-between pt-1">
+                <div className="flex items-center gap-2 border border-slate-200 rounded-xl p-1 bg-white/50 backdrop-blur-md shrink-0">
+                    <button
+                        type="button"
+                        onClick={handleDecrease}
+                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all">
+                        -
+                    </button>
+                    <p className="w-6 text-center font-bold text-sm text-slate-900 font-serif">
+                        {quantity}
+                    </p>
+                    <button
+                        type="button"
+                        onClick={handleIncrease}
+                        className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 hover:bg-slate-100 active:scale-95 transition-all">
+                        +
+                    </button>
+                </div>
+                <div className="flex items-center gap-3">
+                    <div className="shrink-0">
+                        <FavoriteButton product={product} />
+                    </div>
+                    <div className="shrink-0">
+                        <CartButton product={customProduct} quantity={quantity} design={design} />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }

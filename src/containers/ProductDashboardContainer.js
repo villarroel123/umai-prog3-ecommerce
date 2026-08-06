@@ -8,12 +8,11 @@ export default async function ProductDashboardContainer() {
     getCategories(),
     getProducts(),
   ]);
-
   return (
     <div className="space-y-10">
       <CategoryManager initialCategories={categories} />
       <ProductManager
-        initialCategories={categories}
+        categories={categories}
         initialProducts={products}
       />
     </div>

@@ -1,22 +1,22 @@
 import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
+import Product from "@/models/Product"; // Requerido para resolver la referencia
 
+export async function GET(request, { params }) {
+  try {
+    await connectDB();
+    const { userId } = await params;
 
-export async function GET(request, {params}) {
-    try{
-        await connectDB();
-        const {userId}=await params;
+    const user = await User.findById(userId).populate("favorites");
 
-        const user = await User.findById(userId).populate("favorites"); 
+    if (!user) {
+      return Response.json({ error: "Usuario no encontrado" }, { status: 404 });
+    }
 
-        if (!user) {
-            return Response.json({ error: "Usuario no encontrado" }, { status: 404 });
-        }
-
-        return Response.json({ favorites: user.favorites || [] }, { status: 200 });
-    }  catch (error) {
-        return Response.json({ error: "Error al obtener favoritos" }, { status: 500 });
-    }  
+    return Response.json({ favorites: user.favorites || [] }, { status: 200 });
+  } catch (error) {
+    return Response.json({ error: "Error al obtener favoritos" }, { status: 500 });
+  }
 }
 
 export async function POST(request, { params }) {

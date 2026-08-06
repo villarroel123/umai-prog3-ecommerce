@@ -18,24 +18,16 @@ export default async function CategoryProductsPage({ params }) {
   const products = await getProductsByCategory(category._id);
 
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10 text-slate-900">
-      <div className="mx-auto max-w-6xl">
-        <Link
-          className="text-sm font-medium text-emerald-700 hover:text-emerald-900"
-          href="/"
-        >
-          Volver al catalogo
-        </Link>
+    <main className="min-h-screen bg-slate-50 py-20 text-slate-900">
+    
+      <div className="mx-auto max-w-5xl px-6">
 
-        <section className="mb-8 mt-6">
-          <p className="text-sm uppercase tracking-[0.3em] text-emerald-500">
-            Categoria
-          </p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold">
+        <section className="mb-12 text-center">
+          <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight font-serif mb-4">
             {category.name}
-          </h1>
+          </h2>
           {category.description ? (
-            <p className="mt-4 max-w-2xl text-base text-slate-600">
+            <p className="text-lg text-slate-600 max-w-xl mx-auto font-serif">
               {category.description}
             </p>
           ) : null}

@@ -88,42 +88,44 @@ export default function CategoryManager({ initialCategories = [] }) {
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[360px_1fr]">
-      <section className="rounded-lg border border-black/10 bg-white p-6 shadow-sm">
-        <h2 className="text-2xl font-semibold text-slate-900">
+    <div className="grid gap-6 lg:grid-cols-[380px_1fr] items-start font-lexend">
+      <section className="rounded-2xl border border-stone-200 bg-white p-4 sm:p-6 shadow-sm relative lg:sticky lg:top-6">
+        <h2 className="text-lg sm:text-xl font-bold text-stone-900">
           {editingId ? "Editar categoria" : "Nueva categoria"}
         </h2>
-        <p className="mt-2 text-sm text-slate-600">
+        <p className="mt-1 text-xs text-stone-500">
           Las categorias se pueden asociar a muchos productos.
         </p>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
-          <input
-            className="w-full rounded-lg border border-slate-300 px-4 py-3 outline-none"
-            name="name"
-            placeholder="Nombre"
-            value={form.name}
-            onChange={handleChange}
-            required
-          />
-          <textarea
-            className="min-h-28 w-full rounded-lg border border-slate-300 px-4 py-3 outline-none"
-            name="description"
-            placeholder="Descripcion"
-            value={form.description}
-            onChange={handleChange}
-          />
+        <form className="mt-4 sm:mt-6 flex flex-col sm:flex-col gap-3" onSubmit={handleSubmit}>
+          <div className="flex flex-col sm:flex-col lg:flex-col gap-3 w-full">
+            <input
+              className="w-full flex-1 rounded-xl border border-stone-200 bg-stone-50/50 px-3.5 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-900 focus:bg-white transition-all"
+              name="name"
+              placeholder="Nombre"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              className="w-full flex-1 rounded-xl border border-stone-200 bg-stone-50/50 px-3.5 py-2.5 text-sm text-stone-900 outline-none focus:border-stone-900 focus:bg-white transition-all"
+              name="description"
+              placeholder="Descripcion"
+              value={form.description}
+              onChange={handleChange}
+            />
+          </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-2 pt-1 sm:pt-2">
             <button
-              className="rounded-lg bg-slate-900 px-4 py-3 text-sm font-semibold text-white"
+              className="flex-1 rounded-xl bg-[#4A3525] px-4 py-2.5 sm:py-3 text-xs font-semibold text-white shadow-sm hover:bg-[#3B291C] disabled:opacity-50 transition-colors whitespace-nowrap"
               disabled={isSaving}
               type="submit"
             >
               {isSaving ? "Guardando..." : editingId ? "Actualizar" : "Crear"}
             </button>
             <button
-              className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700"
+              className="rounded-xl border border-stone-200 px-4 py-2.5 sm:py-3 text-xs font-semibold text-stone-700 hover:bg-stone-50 transition-colors"
               type="button"
               onClick={resetForm}
             >
@@ -132,19 +134,23 @@ export default function CategoryManager({ initialCategories = [] }) {
           </div>
         </form>
 
-        {message ? <p className="mt-4 text-sm text-slate-700">{message}</p> : null}
+        {message ? (
+          <p className="mt-3 p-2.5 rounded-xl bg-stone-100 border border-stone-200 text-xs font-medium text-stone-700">
+            {message}
+          </p>
+        ) : null}
       </section>
 
-      <section className="rounded-lg border border-black/10 bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between gap-4">
+      <section className="rounded-2xl border border-stone-200 bg-white p-4 sm:p-6 shadow-sm space-y-4 sm:space-y-6">
+        <div className="flex items-center justify-between gap-4 border-b border-stone-100 pb-4">
           <div>
-            <h2 className="text-2xl font-semibold text-slate-900">Categorias</h2>
-            <p className="mt-2 text-sm text-slate-600">
+            <h2 className="text-lg sm:text-xl font-bold text-stone-900">Categorias</h2>
+            <p className="mt-0.5 text-xs text-stone-500">
               Lista de rubros disponibles para los productos.
             </p>
           </div>
           <button
-            className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-semibold text-slate-700"
+            className="rounded-xl border border-stone-200 bg-stone-50 px-3 py-1.5 sm:px-3.5 sm:py-2 text-xs font-semibold text-stone-700 hover:bg-stone-100 transition-colors"
             disabled={isRefreshing}
             type="button"
             onClick={refreshCategories}
@@ -154,34 +160,36 @@ export default function CategoryManager({ initialCategories = [] }) {
         </div>
 
         {initialCategories.length === 0 ? (
-          <p className="mt-6 text-slate-600">Todavia no hay categorias cargadas.</p>
+          <p className="py-8 text-center text-stone-400 text-sm">
+            Todavia no hay categorias cargadas.
+          </p>
         ) : (
-          <div className="mt-6 grid gap-4">
+          <div className="grid gap-3 sm:gap-4">
             {initialCategories.map((category) => (
               <article
                 key={category._id}
-                className="rounded-lg border border-slate-200 p-5"
+                className="rounded-xl border border-stone-200/80 p-4 sm:p-5 hover:border-stone-300 transition-all bg-white"
               >
-                <h3 className="text-xl font-semibold text-slate-900">
+                <h3 className="text-base font-bold text-stone-900">
                   {category.name}
                 </h3>
-                <p className="mt-2 text-sm text-slate-600">
+                <p className="mt-1 text-xs text-stone-500 leading-relaxed">
                   {category.description || "Sin descripcion"}
                 </p>
-                <p className="mt-3 break-all text-xs text-slate-500">
+                <p className="mt-2.5 break-all text-[10px] font-mono text-stone-400">
                   ID: {category._id}
                 </p>
 
-                <div className="mt-4 flex gap-3">
+                <div className="mt-3 pt-3 border-t border-stone-100 flex gap-2">
                   <button
-                    className="rounded-lg bg-amber-100 px-4 py-2 text-sm font-semibold text-amber-900"
+                    className="rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 hover:bg-amber-100 transition-colors border border-amber-200/50"
                     type="button"
                     onClick={() => handleEdit(category)}
                   >
                     Editar
                   </button>
                   <button
-                    className="rounded-lg bg-red-100 px-4 py-2 text-sm font-semibold text-red-900"
+                    className="rounded-lg bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-700 hover:bg-pink-100 transition-colors border border-pink-200/50"
                     type="button"
                     onClick={() => handleDelete(category._id)}
                   >

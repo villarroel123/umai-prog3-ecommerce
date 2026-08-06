@@ -1,4 +1,5 @@
-'use client'
+"use client";
+
 import { useAppContext } from "@/contexts/AppContext";
 import OrderGrid from "@/components/OrderGrid";
 import { useState, useEffect } from "react";
@@ -33,15 +34,15 @@ export default function UserPage() {
     }, [userId]);
 
     return (
-        <div className="max-w-5xl mx-auto p-6 space-y-6 font-lexend text-white">
-            <h2 className="text-3xl font-bold">Mis Órdenes</h2>
+        <div className="max-w-[95rem] mx-auto p-4 sm:p-6 space-y-6 font-lexend text-[#4A3525]">
+            <h2 className="text-3xl font-bold text-[#4A3525]">Mis Órdenes</h2>
 
-            {loading && <p className="text-gray-300">Cargando órdenes...</p>}
+            {loading && <p className="text-stone-500 text-sm">Cargando órdenes...</p>}
 
-            {error && <p className="text-red-400">{error}</p>}
+            {error && <p className="text-pink-600 text-sm font-semibold">{error}</p>}
 
             {!loading && !error && orders.length === 0 && (
-                <p className="text-gray-400">No se encontraron órdenes para este usuario.</p>
+                <p className="text-stone-500 text-sm">No se encontraron órdenes para este usuario.</p>
             )}
 
             {!loading && !error && orders.length > 0 && (
